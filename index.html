@@ -8,12 +8,12 @@
 <style>
   html, body { height: 100%; margin: 0; font-family: system-ui, sans-serif; }
   #map { position: absolute; inset: 0; }
-  .panel { position: absolute; z-index: 1000; left: 10px; bottom: 16px; background: #fff; border-radius: 10px; padding: 10px 12px; box-shadow: 0 2px 10px rgba(0,0,0,.25); font-size: 13px; line-height: 1.5; max-width: 260px; }
+  .panel { position: absolute; z-index: 1000; left: 10px; bottom: 16px; background: #fff; border-radius: 10px; padding: 10px 12px; box-shadow: 0 2px 10px rgba(0,0,0,.25); font-size: 13px; line-height: 1.5; max-width: 270px; }
   .panel b { display: block; margin-bottom: 4px; font-size: 14px; }
-  .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .dot { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
   .btns { position: absolute; z-index: 1000; top: 10px; right: 10px; display: flex; gap: 6px; }
   .btns button { background: #fff; border: 0; border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
-  .lbl { background: transparent; border: 0; box-shadow: none; font-weight: 700; font-size: 15px; text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff; }
+  .lbl { background: transparent; border: 0; box-shadow: none; font-weight: 700; font-size: 18px; text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff; }
   .lbl::before { display: none; }
 </style>
 </head>
@@ -25,34 +25,43 @@
 </div>
 <div class="panel">
   <b>Tournées GLS Gap</b>
-  <div><span class="dot" style="background:#7c3aed"></span>T1 · nord / est (Romette, Tokoro, Fauvins)</div>
-  <div><span class="dot" style="background:#059669"></span>T2 · centre / sud (centre-ville, Puymaure, Fontreyne)</div>
-  <div><span class="dot" style="background:#ea580c"></span>T3 · ouest (Charance) + Veynes</div>
+  <div><span class="dot" style="background:#7c3aed"></span>T1 · nord-est (Romette, Tokoro, Fauvins, route de Briançon)</div>
+  <div><span class="dot" style="background:#059669"></span>T2 · centre + sud (centre-ville, Puymaure, Fontreyne, route de Sisteron)</div>
+  <div><span class="dot" style="background:#ea580c"></span>T3 · nord-ouest (Charance) + Veynes</div>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  var cadreGap = [[44.535, 6.020], [44.592, 6.128]];
-  var cadreTout = [[44.515, 5.795], [44.592, 6.128]];
-  var map = L.map('map').setView([44.562, 6.08], 13);
+  var cadreGap = [[44.515, 5.995], [44.625, 6.165]];
+  var cadreTout = [[44.515, 5.795], [44.625, 6.165]];
+  var map = L.map('map').setView([44.562, 6.08], 12);
 
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19, attribution: '&copy; OpenStreetMap'
   }).addTo(map);
 
+  var P = [44.5625, 6.082];
   var zones = [
-    { nom: 'T1', c: '#7c3aed', centre: [44.5705, 6.1060], r: 1600, txt: 'T1 · nord / est<br>Romette, Tokoro, Fauvins, route de Briançon' },
-    { nom: 'T2', c: '#059669', centre: [44.5535, 6.0700], r: 1700, txt: 'T2 · centre / sud<br>Centre-ville, Puymaure, Fontreyne, route de Sisteron' },
-    { nom: 'T3', c: '#ea580c', centre: [44.5720, 6.0400], r: 1300, txt: 'T3 · Gap ouest<br>Charance, sortie route de Veynes' },
-    { nom: 'T3', c: '#ea580c', centre: [44.5345, 5.8260], r: 1500, txt: 'T3 · Veynes<br>Toute la ville' }
+    { nom: 'T1', c: '#7c3aed', lbl: [44.588, 6.125],
+      pts: [P, [44.625, 6.087], [44.625, 6.165], [44.5325, 6.165], [44.556, 6.10]],
+      txt: 'T1 · nord-est<br>Romette, Tokoro, Fauvins (dépôt), route de Briançon' },
+    { nom: 'T2', c: '#059669', lbl: [44.535, 6.075],
+      pts: [P, [44.556, 6.10], [44.5325, 6.165], [44.515, 6.165], [44.515, 5.995], [44.575, 5.995], [44.572, 6.03], [44.5675, 6.06]],
+      txt: 'T2 · centre + sud<br>Centre-ville, Puymaure, Fontreyne, route de Sisteron' },
+    { nom: 'T3', c: '#ea580c', lbl: [44.595, 6.035],
+      pts: [P, [44.5675, 6.06], [44.572, 6.03], [44.575, 5.995], [44.625, 5.995], [44.625, 6.087]],
+      txt: 'T3 · nord-ouest de Gap<br>Charance, route de Grenoble côté ouest' },
+    { nom: 'T3', c: '#ea580c', lbl: [44.534, 5.8275],
+      pts: [[44.550, 5.800], [44.550, 5.855], [44.518, 5.855], [44.518, 5.800]],
+      txt: 'T3 · Veynes<br>Toute la ville' }
   ];
 
   zones.forEach(function (z) {
-    L.circle(z.centre, { radius: z.r, color: z.c, weight: 3, fillColor: z.c, fillOpacity: 0.18 }).addTo(map).bindPopup(z.txt);
+    L.polygon(z.pts, { color: z.c, weight: 3, fillColor: z.c, fillOpacity: 0.2 }).addTo(map).bindPopup(z.txt);
     L.tooltip({ permanent: true, direction: 'center', className: 'lbl' })
-      .setLatLng(z.centre).setContent('<span style="color:' + z.c + '">' + z.nom + '</span>').addTo(map);
+      .setLatLng(z.lbl).setContent('<span style="color:' + z.c + '">' + z.nom + '</span>').addTo(map);
   });
 
-  L.polyline([[44.5640, 6.0270], [44.5520, 5.9500], [44.5440, 5.8800], [44.5360, 5.8450]], {
+  L.polyline([[44.5600, 6.0000], [44.5520, 5.9500], [44.5440, 5.8800], [44.5420, 5.8550]], {
     color: '#ea580c', weight: 3, dashArray: '8 8', opacity: 0.8
   }).addTo(map).bindPopup('T3 · trajet D994 Gap → Veynes (~25 km)');
 
