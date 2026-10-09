@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tournées Gap Veynes</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  html, body { height: 100%; margin: 0; font-family: system-ui, sans-serif; }
+  #map { position: absolute; inset: 0; }
+  .panel { position: absolute; z-index: 1000; left: 10px; bottom: 16px; background: #fff; border-radius: 10px; padding: 10px 12px; box-shadow: 0 2px 10px rgba(0,0,0,.25); font-size: 13px; line-height: 1.5; max-width: 260px; }
+  .panel b { display: block; margin-bottom: 4px; font-size: 14px; }
+  .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  .btns { position: absolute; z-index: 1000; top: 10px; right: 10px; display: flex; gap: 6px; }
+  .btns button { background: #fff; border: 0; border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+  .lbl { background: transparent; border: 0; box-shadow: none; font-weight: 700; font-size: 15px; text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff; }
+  .lbl::before { display: none; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="btns">
+  <button id="bGap">Gap</button>
+  <button id="bAll">Tout</button>
+</div>
+<div class="panel">
+  <b>Tournées GLS Gap</b>
+  <div><span class="dot" style="background:#7c3aed"></span>T1 · nord / est (Romette, Tokoro, Fauvins)</div>
+  <div><span class="dot" style="background:#059669"></span>T2 · centre / sud (centre-ville, Fontreyne)</div>
+  <div><span class="dot" style="background:#ea580c"></span>T3 · ouest (Charance, Puymaure) + Veynes</div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  var map = L.map('map');
+  var fonds = [
+    ['https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', '&copy; OpenStreetMap &copy; CARTO'],
+    ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', '&copy; Esri']
+  ];
+  var idx = 0, erreurs = 0, couche;
+  function chargeFond() {
+    if (couche) map.removeLayer(couche);
+    couche = L.tileLayer(fonds[idx][0], { maxZoom: 19, subdomains: 'abcd', attribution: fonds[idx][1] }).addTo(map);
+    couche.on('tileerror', function () {
+      erreurs++;
+      if (erreurs > 4 && idx < fonds.length - 1) { idx++; erreurs = 0; chargeFond(); }
+    });
+  }
+  chargeFond();
+
+  var zones = [
+    { nom: 'T1', c: '#7c3aed', centre: [44.5705, 6.1005], r: 1700, txt: 'T1 · nord / est<br>Romette, Tokoro, Fauvins, route de Briançon' },
+    { nom: 'T2', c: '#059669', centre: [44.5520, 6.0720], r: 1500, txt: 'T2 · centre / sud<br>Centre-ville, Fontreyne, route de Sisteron' },
+    { nom: 'T3', c: '#ea580c', centre: [44.5700, 6.0580], r: 1400, txt: 'T3 · Gap ouest<br>Charance, Puymaure, sortie route de Veynes' },
+    { nom: 'T3', c: '#ea580c', centre: [44.5345, 5.8260], r: 1500, txt: 'T3 · Veynes<br>Toute la ville' }
+  ];
+
+  var gapGroup = [];
+  zones.forEach(function (z) {
+    var circle = L.circle(z.centre, { radius: z.r, color: z.c, weight: 3, fillColor: z.c, fillOpacity: 0.18 }).addTo(map);
+    circle.bindPopup(z.txt);
+    L.tooltip({ permanent: true, direction: 'center', className: 'lbl' })
+      .setLatLng(z.centre).setContent('<span style="color:' + z.c + '">' + z.nom + '</span>').addTo(map);
+    if (z.centre[1] > 6) gapGroup.push(circle);
+  });
+
+  L.polyline([[44.5600, 6.0420], [44.5520, 5.9500], [44.5440, 5.8800], [44.5360, 5.8450]], {
+    color: '#ea580c', weight: 3, dashArray: '8 8', opacity: 0.8
+  }).addTo(map).bindPopup('T3 · trajet D994 Gap → Veynes (~25 km)');
+
+  L.marker([44.563377, 6.107429]).addTo(map).bindPopup('<b>Dépôt GLS</b><br>Route des Fauvins');
+
+  var all = L.featureGroup(zones.map(function (z) { return L.circle(z.centre, { radius: z.r }); }));
+  var gap = L.featureGroup(gapGroup);
+  document.getElementById('bAll').onclick = function () { map.fitBounds(all.getBounds(), { padding: [20, 20] }); };
+  document.getElementById('bGap').onclick = function () { map.fitBounds(gap.getBounds(), { padding: [20, 20] }); };
+  map.fitBounds(gap.getBounds(), { padding: [20, 20] });
+</script>
+</body>
+</html>
