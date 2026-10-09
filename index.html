@@ -31,7 +31,10 @@
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  var map = L.map('map');
+  var cadreGap = [[44.535, 6.035], [44.592, 6.128]];
+  var cadreTout = [[44.515, 5.795], [44.592, 6.128]];
+  var map = L.map('map').fitBounds(cadreGap);
+
   var fonds = [
     ['https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', '&copy; OpenStreetMap &copy; CARTO'],
     ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', '&copy; Esri']
@@ -54,13 +57,10 @@
     { nom: 'T3', c: '#ea580c', centre: [44.5345, 5.8260], r: 1500, txt: 'T3 · Veynes<br>Toute la ville' }
   ];
 
-  var gapGroup = [];
   zones.forEach(function (z) {
-    var circle = L.circle(z.centre, { radius: z.r, color: z.c, weight: 3, fillColor: z.c, fillOpacity: 0.18 }).addTo(map);
-    circle.bindPopup(z.txt);
+    L.circle(z.centre, { radius: z.r, color: z.c, weight: 3, fillColor: z.c, fillOpacity: 0.18 }).addTo(map).bindPopup(z.txt);
     L.tooltip({ permanent: true, direction: 'center', className: 'lbl' })
       .setLatLng(z.centre).setContent('<span style="color:' + z.c + '">' + z.nom + '</span>').addTo(map);
-    if (z.centre[1] > 6) gapGroup.push(circle);
   });
 
   L.polyline([[44.5600, 6.0420], [44.5520, 5.9500], [44.5440, 5.8800], [44.5360, 5.8450]], {
@@ -69,11 +69,8 @@
 
   L.marker([44.563377, 6.107429]).addTo(map).bindPopup('<b>Dépôt GLS</b><br>Route des Fauvins');
 
-  var all = L.featureGroup(zones.map(function (z) { return L.circle(z.centre, { radius: z.r }); }));
-  var gap = L.featureGroup(gapGroup);
-  document.getElementById('bAll').onclick = function () { map.fitBounds(all.getBounds(), { padding: [20, 20] }); };
-  document.getElementById('bGap').onclick = function () { map.fitBounds(gap.getBounds(), { padding: [20, 20] }); };
-  map.fitBounds(gap.getBounds(), { padding: [20, 20] });
+  document.getElementById('bGap').onclick = function () { map.fitBounds(cadreGap); };
+  document.getElementById('bAll').onclick = function () { map.fitBounds(cadreTout); };
 </script>
 </body>
 </html>
