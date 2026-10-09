@@ -26,12 +26,12 @@
 <div class="panel">
   <b>Tournées GLS Gap</b>
   <div><span class="dot" style="background:#7c3aed"></span>T1 · nord / est (Romette, Tokoro, Fauvins)</div>
-  <div><span class="dot" style="background:#059669"></span>T2 · centre / sud (centre-ville, Fontreyne)</div>
-  <div><span class="dot" style="background:#ea580c"></span>T3 · ouest (Charance, Puymaure) + Veynes</div>
+  <div><span class="dot" style="background:#059669"></span>T2 · centre / sud (centre-ville, Puymaure, Fontreyne)</div>
+  <div><span class="dot" style="background:#ea580c"></span>T3 · ouest (Charance) + Veynes</div>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  var cadreGap = [[44.535, 6.035], [44.592, 6.128]];
+  var cadreGap = [[44.535, 6.020], [44.592, 6.128]];
   var cadreTout = [[44.515, 5.795], [44.592, 6.128]];
   var map = L.map('map').setView([44.562, 6.08], 13);
 
@@ -40,9 +40,9 @@
   }).addTo(map);
 
   var zones = [
-    { nom: 'T1', c: '#7c3aed', centre: [44.5705, 6.1005], r: 1700, txt: 'T1 · nord / est<br>Romette, Tokoro, Fauvins, route de Briançon' },
-    { nom: 'T2', c: '#059669', centre: [44.5520, 6.0720], r: 1500, txt: 'T2 · centre / sud<br>Centre-ville, Fontreyne, route de Sisteron' },
-    { nom: 'T3', c: '#ea580c', centre: [44.5700, 6.0580], r: 1400, txt: 'T3 · Gap ouest<br>Charance, Puymaure, sortie route de Veynes' },
+    { nom: 'T1', c: '#7c3aed', centre: [44.5705, 6.1060], r: 1600, txt: 'T1 · nord / est<br>Romette, Tokoro, Fauvins, route de Briançon' },
+    { nom: 'T2', c: '#059669', centre: [44.5535, 6.0700], r: 1700, txt: 'T2 · centre / sud<br>Centre-ville, Puymaure, Fontreyne, route de Sisteron' },
+    { nom: 'T3', c: '#ea580c', centre: [44.5720, 6.0400], r: 1300, txt: 'T3 · Gap ouest<br>Charance, sortie route de Veynes' },
     { nom: 'T3', c: '#ea580c', centre: [44.5345, 5.8260], r: 1500, txt: 'T3 · Veynes<br>Toute la ville' }
   ];
 
@@ -52,7 +52,7 @@
       .setLatLng(z.centre).setContent('<span style="color:' + z.c + '">' + z.nom + '</span>').addTo(map);
   });
 
-  L.polyline([[44.5600, 6.0420], [44.5520, 5.9500], [44.5440, 5.8800], [44.5360, 5.8450]], {
+  L.polyline([[44.5640, 6.0270], [44.5520, 5.9500], [44.5440, 5.8800], [44.5360, 5.8450]], {
     color: '#ea580c', weight: 3, dashArray: '8 8', opacity: 0.8
   }).addTo(map).bindPopup('T3 · trajet D994 Gap → Veynes (~25 km)');
 
