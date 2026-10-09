@@ -33,22 +33,11 @@
 <script>
   var cadreGap = [[44.535, 6.035], [44.592, 6.128]];
   var cadreTout = [[44.515, 5.795], [44.592, 6.128]];
-  var map = L.map('map').fitBounds(cadreGap);
+  var map = L.map('map').setView([44.562, 6.08], 13);
 
-  var fonds = [
-    ['https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', '&copy; OpenStreetMap &copy; CARTO'],
-    ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', '&copy; Esri']
-  ];
-  var idx = 0, erreurs = 0, couche;
-  function chargeFond() {
-    if (couche) map.removeLayer(couche);
-    couche = L.tileLayer(fonds[idx][0], { maxZoom: 19, subdomains: 'abcd', attribution: fonds[idx][1] }).addTo(map);
-    couche.on('tileerror', function () {
-      erreurs++;
-      if (erreurs > 4 && idx < fonds.length - 1) { idx++; erreurs = 0; chargeFond(); }
-    });
-  }
-  chargeFond();
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
 
   var zones = [
     { nom: 'T1', c: '#7c3aed', centre: [44.5705, 6.1005], r: 1700, txt: 'T1 · nord / est<br>Romette, Tokoro, Fauvins, route de Briançon' },
@@ -71,6 +60,7 @@
 
   document.getElementById('bGap').onclick = function () { map.fitBounds(cadreGap); };
   document.getElementById('bAll').onclick = function () { map.fitBounds(cadreTout); };
+  setTimeout(function () { map.invalidateSize(); map.fitBounds(cadreGap); }, 300);
 </script>
 </body>
 </html>
